@@ -1,5 +1,9 @@
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
+
 
 
 
@@ -28,6 +32,46 @@ public class UI {
         String[] commands = input.split("^");
         return commands;
     }
+    
+    /**
+     * Takes the input as a String, also the reference to the instance of Command. 
+     * This method encapsulates the functionality of lines 143-166.
+     * 
+     * @param commandInput 
+     * @param cmd
+     */
+    public static void checkAndEsecute(String commandInput, Command cmd){
+                    //
+                    // Separate concatenated commands
+                    //
+                    String[] commands = parseCommands(commandInput);
+
+                    //
+                    // Check format and execute every command.
+                    //
+                    for (String command : commands){
+
+                        //
+                        // Throws Exception in case that the format is wrong
+                        //
+                        try{
+                            // Check format
+                            if(!cmd.validate(command)){
+                                throw new Exception("The input command is not an available command.");
+                            }
+
+                            // Execute and print output
+                            String output = cmd.excecute(command);
+                            
+                            System.out.println(output + "\n\n");
+                        }
+
+                        catch(Exception e){
+                            System.err.println(e);
+                        }
+                    }
+    }
+    
 
     /**
      * @param args
@@ -37,12 +81,13 @@ public class UI {
         Scanner scan = new Scanner(System.in);
         Command cmd = new Command();
         ArrayList<String> history = new ArrayList<>();
-        
+        ListIterator<String> historyIterator = history.listIterator();
         //
         // Start shell 
         //
         while(true){
-            System.out.println("> ");
+            System.out.println("\n> ");
+
             
             //
             // and wait for command input.
@@ -56,17 +101,33 @@ public class UI {
                 
                 // Show shell command history.
                 case("history"):{
-                    TODO
+                    System.out.println("History");
+                    while(historyIterator.hasNext()){
+                    System.out.println(historyIterator.next());
+                    }
+                    
                 }
                 
                 // Execute the first command in history.
                 case("!1"):{
-                    TODO
+                    System.out.println("First Command");
+                    String firstCommand = history.get(0); 
+                    System.out.println(firstCommand);
+                    checkAndExecute(firstCommand,cmd);
+                    
+                    
+                            
+                    
                 }
                 
                 // Execute the last command in history.
                 case("!#"):{
-                    TODO
+                    int history_length = history.size();
+                    System.out.println("Last command");
+                    String lastCommand = history.get(history_length);
+                    System.out.println(history.get(history_length));
+                    checkAndExecute(lastCommand, cmd);
+                    
                 }
                 
                 //
@@ -91,10 +152,13 @@ public class UI {
                         //
                         try{
                             // Check format
-                            String[] toExecute = cmd.validate(command);
+                            if(!cmd.validate(command)){
+                                throw new Exception("The input command is not an available command.");
+                            }
 
                             // Execute and print output
-                            String output = cmd.excecute(toExecute);
+                            String output = cmd.excecute(command);
+                            
                             System.out.println(output + "\n\n");
                         }
 
@@ -106,4 +170,6 @@ public class UI {
             }
         }
     }
+    
+    
 }
