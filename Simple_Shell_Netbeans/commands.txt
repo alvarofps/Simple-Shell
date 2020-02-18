@@ -1,0 +1,6 @@
+ls
+cd
+echo
+ping
+ipconfig
+ifconfig
